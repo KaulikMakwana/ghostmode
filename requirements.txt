@@ -1,0 +1,7 @@
+# GhostMode runtime dependencies (Python 3.11+)
+click>=8.4              # CLI framework
+rich>=15.0             # colored dashboard tables / banner / progress
+InquirerPy>=0.3.4      # themed y/N confirm prompt
+prompt_toolkit>=3.0.52 # custom color-coded picker (core/picker.py)
+websockets>=16.0       # Chrome DevTools Protocol transport
+requests>=2.34         # CDP HTTP endpoints (version/targets)
