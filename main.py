@@ -11,6 +11,8 @@ from rich.console import Console
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import PROFILES_DIR
+from core import version
+from core.version import __version__
 from core.browser import Browser, running_profile_dir, kill_running_browser
 from core import database as db
 from core.tui import (print_banner, print_accounts_table, print_dashboard,
@@ -91,13 +93,23 @@ def _get_browser(acc: dict) -> Browser:
 # ── CLI root ──────────────────────────────────────────────────────────────────
 
 @click.group()
+@click.version_option(version=__version__, prog_name="GhostMode")
 @click.option("--headless", is_flag=True,
               help="Run Chromium headless (no visible window). Default: visible. "
                    "Goes before the command, e.g. 'main.py --headless dashboard ...'.")
 def cli(headless):
-    """GhostMode — Erase your digital footprint."""
+    """GhostMode v{ver} — Erase your digital footprint.
+
+    Run 'python main.py update' to fetch the latest version from GitHub.
+    """
     global HEADLESS
     HEADLESS = headless
+    # Throttled, fail-silent GitHub poll (≤ once/day). Banner reads the cache it writes.
+    version.refresh_cache()
+
+
+# Inject the live version into the group help (docstrings can't use f-strings).
+cli.help = (cli.help or "").replace("{ver}", __version__)
 
 
 # ── login group ──────────────────────────────────────────────────────────────
@@ -409,6 +421,22 @@ def list_services(service):
     for i, s in enumerate(_catalog(service), 1):
         table.add_row(str(i), s["name"], s["category"], s["delete_type"])
     console.print(table)
+
+
+# ── update ──────────────────────────────────────────────────────────────────────
+
+@cli.command()
+def update():
+    """Update GhostMode to the latest version from GitHub."""
+    print_banner()
+    latest = version.refresh_cache(force=True)
+    if latest and version._parse(latest) <= version._parse(__version__):
+        console.print(f"[green]✔  Already on the latest version (v{__version__}).[/green]\n")
+        return
+    if not confirm("Pull the latest GhostMode and reinstall dependencies?"):
+        console.print("[dim]Aborted.[/dim]")
+        return
+    version.do_update(console)
 
 
 # ── Shared helpers ────────────────────────────────────────────────────────────

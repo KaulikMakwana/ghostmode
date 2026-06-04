@@ -198,6 +198,19 @@ The global `--headless` flag goes **before** the command and runs Chromium with 
 python main.py --headless dashboard --service instagram
 ```
 
+### Updating
+
+GhostMode prints its version in the banner and in `--help`, checks GitHub once a day for
+a newer release, and self-updates from your git checkout:
+
+```bash
+python main.py --version    # show the running version
+python main.py update       # git pull + reinstall deps from the latest release
+```
+
+When a newer version is published, the banner shows an `⬆ Update available` line. The
+check is fail-silent — offline or no new release, nothing changes.
+
 ---
 
 ## 🏗️ How It Works

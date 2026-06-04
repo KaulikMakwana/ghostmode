@@ -7,6 +7,8 @@ from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeEl
 from rich.text import Text
 from rich import box
 
+from core import version
+
 console = Console()
 
 
@@ -22,10 +24,13 @@ def print_banner(account_email: str = ""):
     banner = Text()
     for line in lines:
         banner.append(line + "\n", style="bold cyan")
-    sub = "                     Digital Footprint Eraser"
+    sub = f"                     Digital Footprint Eraser  ·  v{version.__version__}"
     if account_email:
         sub += f"  ·  {account_email}"
     banner.append(sub, style="dim white")
+    note = version.notice()
+    if note:
+        banner.append("\n" + note, style="yellow")
     console.print(Panel(banner, border_style="cyan", padding=(0, 2)))
     console.print()
 
