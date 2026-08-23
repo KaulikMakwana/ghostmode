@@ -134,7 +134,7 @@ Here is the line GhostMode will **not** lie to you about:
 | Service | Status | Coverage |
 | --- | --- | --- |
 | **Google** | ✅ Full | ~58 categories — Search, YouTube (history, comments, liked videos, subscriptions…), Maps, Assistant, Play; 9 tracking toggles; one-click **nuclear** delete-all |
-| **Instagram** | ✅ Phase 1 | Likes, Comments, Story Replies, Posts & Media |
+| **Instagram** | ✅ Phase 1 | Likes, Comments, Story Replies, Posts & Media; Activity Status + Ad-Partner Activity toggles |
 | Instagram DMs | 🚧 Planned | Per-thread deletion (Phase 2) |
 | Instagram Account | 🚧 Planned | Gated account deletion (Phase 3) |
 
@@ -193,6 +193,7 @@ python main.py delete --service google --nuclear          # one-shot delete ALL 
 
 # Turn off tracking
 python main.py toggle --service google           # flip Google's tracking switches OFF
+python main.py toggle --service instagram        # flip Activity Status + Ad-Partner Activity OFF
 ```
 
 <details>
@@ -280,6 +281,7 @@ Key knobs live in `config.py`:
 
 ## 🗺️ Roadmap
 
+- [x] Instagram tracking toggles — Activity Status, Ad-Partner Activity
 - [ ] Instagram **DMs** — per-thread deletion (Phase 2)
 - [ ] Instagram **account deletion** — gated one-shot (Phase 3)
 - [ ] More services
