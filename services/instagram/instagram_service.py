@@ -9,6 +9,8 @@ from core.base_service import BaseService
 from core.tui import print_event
 from services.instagram.categories import SERVICES, get_by_category
 from services.instagram.deleters.bulk_activity import bulk_delete_activity, page_has_activity
+from services.instagram.deleters.toggle_off import (
+    scan_toggles_all, turn_off_selected)
 
 BASE = "https://www.instagram.com"
 LOGIN_URL = f"{BASE}/accounts/login/"
@@ -149,6 +151,24 @@ class InstagramService(BaseService):
         return results
 
     async def toggle_off(self, browser) -> dict:
-        """Instagram has no Google-style tracking-toggle dashboard. Phase 1 returns
-        nothing; a future pass can flip Activity Status / ad personalization."""
-        return {}
+        session = await browser.connect()
+        try:
+            states = await scan_toggles_all(session)
+            return await turn_off_selected(session, list(states.keys()))
+        finally:
+            await session.close()
+
+    async def scan_toggles(self, browser, progress_cb=None) -> dict:
+        """Read current toggle states without changing them."""
+        session = await browser.connect()
+        try:
+            return await scan_toggles_all(session, progress_cb)
+        finally:
+            await session.close()
+
+    async def toggle_off_selected(self, browser, names: list) -> dict:
+        session = await browser.connect()
+        try:
+            return await turn_off_selected(session, names)
+        finally:
+            await session.close()
